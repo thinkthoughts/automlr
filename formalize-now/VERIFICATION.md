@@ -1,6 +1,6 @@
 # Verification
 
-All checks below were run in this fork on 2026-11-02. "Upstream-reported" means a claim made by the upstream repository; "reproduced" means it was run here with the output recorded below.
+All checks below were run in this fork on 2026-11-02. Reproductions 1 and 2 ran on the EXT-001 to EXT-004 branch, which landed on fork `main` as `6461e4d`; Reproduction 3 ran on a local branch from `6461e4d` adding EXT-005. "Upstream-reported" means a claim made by the upstream repository; "reproduced" means it was run here with the output recorded below.
 
 ## Environment
 
@@ -10,7 +10,7 @@ All checks below were run in this fork on 2026-11-02. "Upstream-reported" means 
 | Lean | `4.31.0` via elan (`Lake 5.0.0-src+68218e8`), from `formalization/lean-toolchain` |
 | Mathlib | `v4.31.0`, prebuilt cache via `lake exe cache get` (8542 files downloaded and decompressed; no Mathlib source build) |
 | Upstream commit | `33daec7fd0092d9215b9692c8241676a3c05a82e` |
-| Fork branch | `formalize-now/symmetric-maximal` |
+| Fork branches | `formalize-now/symmetric-maximal` (EXT-001 to EXT-004, now `main` at `6461e4d`); `r001-threshold-degree` from `6461e4d` (EXT-005) |
 
 ## Upstream-reported verification
 
@@ -52,6 +52,20 @@ Same command, with `Extensions/SymmetricMaximal.lean` and `Extensions/All.lean` 
 
 Upstream files are byte-identical to the pinned commit; the diff adds files only.
 
+## Reproduction 3: with EXT-005 (R-001)
+
+Base: fork `main` at `6461e4d`, with `Extensions/SymmetricThresholdDegree.lean` added and `Extensions/All.lean` updated, both staged. Same command.
+
+| Check | Result |
+|---|---|
+| Build | `Build completed successfully (2416 jobs)`, `BUILD_RC=0`, 44 tracked sources, including `Built HeadComplexity.Extensions.SymmetricThresholdDegree` |
+| Placeholder scan | `PLACEHOLDER_RC=0` |
+| Axiom audit | `HeadComplexity.Extensions.SymmetricThresholdDegree: audited 10 theorem declarations`, `HeadComplexity.Extensions.All: audited 9 theorem declarations`, `HeadComplexity.Extensions.SymmetricMaximal: audited 17 theorem declarations`, `Audited 800 theorem declarations across 44 modules.` (764 upstream plus 36 fork), `AXIOM_RC=0` |
+| Overall | `Validation completed successfully.` exit 0 |
+| `PrintAxioms.lean` | exit 0; all 36 `#print axioms` lines report `[propext, Classical.choice, Quot.sound]`; `sorryAx` appears 0 times |
+
+The new module is in the audit, as the per-module line above shows. Upstream files remain byte-identical to `33daec7`.
+
 ## Axiom output for crosswalked declarations
 
 Command, from `formalization/`:
@@ -69,13 +83,14 @@ Every declaration below printed `depends on axioms: [propext, Classical.choice, 
 | ARCH-003 | `degree_le_of_computableWithHeadsN` |
 | ARCH-004 | `thresholdDeg_f10`, `HStar_f10_ge_three`, `f10_strict_separation` |
 | ARCH-005 | `HStar_le_weighted_sum`, `HStar_le_universal_boolean` |
-| ARCH-006 | `HStar_symmetricFn` |
+| ARCH-006 | `HStar_symmetricFn` (upstream); `Ext.thresholdDeg_symmetricFn`, `Ext.HStar_thresholdDeg_signChanges_symmetricFn` (fork, EXT-005) |
 | ARCH-007 | `HStar_parity` (also `thresholdDeg_parity`) |
 | ARCH-009 | `signChanges_parity` |
 | EXT-001 | `Ext.signChanges_le`, `Ext.HStar_symmetricFn_le` |
 | EXT-002 | `Ext.signChanges_not`, `Ext.HStar_not_symmetricFn`, `Ext.HStar_not_parity` |
 | EXT-003 | `Ext.signChanges_eq_self_iff` |
 | EXT-004 | `Ext.alternating_eq`, `Ext.signChanges_eq_self_iff_parity`, `Ext.HStar_symmetricFn_eq_self_iff`, `Ext.signChanges_zero`, `Ext.HStar_symmetricFn_zero_cases` |
+| EXT-005 | `Ext.ThresholdDegLE_symmetricFn`, `Ext.thresholdDeg_symmetricFn`, `Ext.HStar_eq_thresholdDeg_symmetricFn`, `Ext.HStar_thresholdDeg_signChanges_symmetricFn`, `Ext.thresholdDeg_symmetricFn_zero`, `Ext.signChanges_one`, `Ext.thresholdDeg_symmetricFn_one`, `Ext.thresholdDeg_symmetricFn_const`, `Ext.thresholdDeg_parity_of_symmetricFn`, `Ext.thresholdDeg_not_parity` |
 
 Exact elaborated statements of the fork extensions, from `#check` in the same script:
 
@@ -93,7 +108,20 @@ Ext.HStar_symmetricFn_eq_self_iff : ∀ (n : ℕ) (F : ℕ → Bool),
   HStar n (symmetricFn F) = n ↔ symmetricFn F = PARITY n ∨ symmetricFn F = fun bits => !PARITY n bits
 Ext.HStar_symmetricFn_zero_cases : ∀ (F : ℕ → Bool),
   HStar 0 (symmetricFn F) = 0 ∧ (symmetricFn F = PARITY 0 ∨ symmetricFn F = fun bits => !PARITY 0 bits)
+Ext.ThresholdDegLE_symmetricFn : ∀ (n : ℕ) (F : ℕ → Bool), ThresholdDegLE (symmetricFn F) (signChanges n F)
+Ext.thresholdDeg_symmetricFn : ∀ (n : ℕ) (F : ℕ → Bool), thresholdDeg (symmetricFn F) = signChanges n F
+Ext.HStar_eq_thresholdDeg_symmetricFn : ∀ (n : ℕ) (F : ℕ → Bool), HStar n (symmetricFn F) = thresholdDeg (symmetricFn F)
+Ext.HStar_thresholdDeg_signChanges_symmetricFn : ∀ (n : ℕ) (F : ℕ → Bool),
+  HStar n (symmetricFn F) = thresholdDeg (symmetricFn F) ∧ thresholdDeg (symmetricFn F) = signChanges n F
+Ext.thresholdDeg_symmetricFn_zero : ∀ (F : ℕ → Bool), thresholdDeg (symmetricFn F) = 0
+Ext.signChanges_one : ∀ (F : ℕ → Bool), signChanges 1 F = if F 0 = F 1 then 0 else 1
+Ext.thresholdDeg_symmetricFn_one : ∀ (F : ℕ → Bool), thresholdDeg (symmetricFn F) = if F 0 = F 1 then 0 else 1
+Ext.thresholdDeg_symmetricFn_const : ∀ (n : ℕ) (b : Bool), thresholdDeg (symmetricFn fun x => b) = 0
+Ext.thresholdDeg_parity_of_symmetricFn : ∀ (n : ℕ), thresholdDeg (PARITY n) = n
+Ext.thresholdDeg_not_parity : ∀ (n : ℕ), (thresholdDeg fun bits => !PARITY n bits) = n
 ```
+
+In `thresholdDeg_symmetricFn_zero` and `thresholdDeg_symmetricFn_one` the implicit dimension is `0` and `1` respectively (set by `(n := 0)` and `(n := 1)` in the source).
 
 ## Edge case $n = 0$
 
@@ -109,6 +137,10 @@ Run before describing the extensions as fork contributions:
 
 Result: EXT-001 formalizes a paper remark as a named declaration; EXT-002 to EXT-004 are absent from the library, the upstream prose, and the bundled paper.
 
+## Duplicate search for EXT-005
+
+Before writing EXT-005, on fork `main` at `6461e4d`: regex search of `formalization/HeadComplexity` for `thresholdDeg` combined with `symmetricFn` or `signChanges` in either order, and for `HStar … = thresholdDeg` or `thresholdDeg … = HStar`. No declaration matched. The closest upstream result is `thresholdDeg_parity`, which proves the parity case with the same sandwich argument; EXT-005 generalizes it to every profile and rederives it as `Ext.thresholdDeg_parity_of_symmetricFn`.
+
 ## Checks that could not be completed
 
 | Item | State |
@@ -116,4 +148,4 @@ Result: EXT-001 formalizes a paper remark as a named declaration; EXT-002 to EXT
 | Comparator | Not run. The repository has no Comparator setup; the paper's writeup lists Lean `comparator` as future work. Listed as ROADMAP item R-003. |
 | Markdown math lint | `AGENTS.md`, `artifacts/hooks/pre-commit`, and `artifacts/scripts/test_check_md_math.py` reference `artifacts/scripts/check_md_math.py`, and that script is absent at the pinned commit. The documents here follow the AGENTS.md rules by hand; the automated lint and KaTeX validation were not run. |
 | arXiv PDF | The arXiv copy was rate-limited when fetched on 2026-11-02. Theorem numbers and appendix letters were checked against the bundled `formally-verified-autoresearch-mha.pdf` only. |
-| Statement fidelity review | The Lean kernel checks proofs. Whether each upstream formal statement faithfully captures the paper's claim is a human review step; the crosswalk records form differences (ARCH-002, ARCH-003, ARCH-006) and a Lean-expert review of those remains open. |
+| Statement fidelity review | The Lean kernel checks proofs. Whether each formal statement faithfully captures the paper's claim is a human review step; the crosswalk records the remaining form differences (ARCH-002, ARCH-003) and the definition-level correspondence checks for ARCH-006, and a Lean-expert review of those remains open. |

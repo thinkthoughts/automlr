@@ -5,8 +5,9 @@ Small extensions, each independently verifiable with `artifacts/scripts/validate
 ## Completed
 
 - **EXT-001 to EXT-004.** Parity and its complement are exactly the symmetric Boolean functions with $H^{\ast}(f) = n$. Status: fork-extension-verified (VERIFICATION.md).
+- **R-001, as EXT-005.** `Ext.thresholdDeg_symmetricFn : thresholdDeg (symmetricFn F) = signChanges n F` and the full chain `Ext.HStar_thresholdDeg_signChanges_symmetricFn`, completing ARCH-006. Status: fork-extension-verified (VERIFICATION.md, Reproduction 3). Record of the original plan follows.
 
-## R-001. Threshold degree of symmetric functions (closes ARCH-006)
+## R-001. Threshold degree of symmetric functions (completed as EXT-005)
 
 **Target.** `thresholdDeg (symmetricFn F) = signChanges n F` (paper Theorem 5, middle equality $\deg _{\pm}(f) = C(F)$), then `thresholdDeg (symmetricFn F) = HStar n (symmetricFn F)`.
 
@@ -15,7 +16,7 @@ Small extensions, each independently verifiable with `artifacts/scripts/validate
 1. Upper bound: `symmetricFn_computable F n` gives a $C(F)$-head computation; `signReprDegLe_of_computableWithHeadsN` turns it into `ThresholdDegLE (symmetricFn F) (signChanges n F)`; then `Nat.find_min'` on `thresholdDeg`.
 2. Lower bound: `Nat.find_spec` on `thresholdDeg` and `signChanges_le_of_ThresholdDegLE`.
 
-Expected size: about 15 lines. Upgrades ARCH-006 from partial to fully formalized, and yields `thresholdDeg_parity` as a corollary of the symmetric case.
+Outcome: the plan worked as written. The core proof is 7 lines; with the paper-form statement and the required cases the module has 10 theorems. Upgrades ARCH-006 from partial to fully formalized, and yields `thresholdDeg_parity` as a corollary of the symmetric case.
 
 ## R-002. Paper-form statements for ARCH-002 and ARCH-003
 
@@ -28,3 +29,7 @@ Set up Lean `comparator` with the human-reviewed statements of the ARCH and EXT 
 ## R-004. Counting symmetric functions by head complexity
 
 **Target.** For $0 \leq h \leq n$, the number of profiles on $\lbrace 0, \dots, n\rbrace$ with $C(F) = h$ is $2 \binom{n}{h}$, so exactly $2 \binom{n}{h}$ symmetric functions on $n$ bits have $H^{\ast}(f) = h$. EXT-004 is the case $h = n$. Requires a bijection between profiles and (starting value, change set), a moderate Finset exercise.
+
+## R-005. Permutation-invariant functions have a profile
+
+**Target.** If `f : (Fin n → Bool) → Bool` satisfies `f (x ∘ σ) = f x` for every permutation `σ`, then `f = symmetricFn F` for the profile `F k := f (fun i => decide (i.val < k))`. Formalizes the paper's remark before Theorem 5 (Paturi, 1992), so Theorem 5 and EXT-001 to EXT-005 apply to permutation-invariant functions as stated in the paper's definitions. Upstream `hammingWeight_comp_perm` is a likely ingredient.

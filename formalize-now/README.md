@@ -1,6 +1,6 @@
 # formalize.now research fork: automlr
 
-This directory turns the `thinkthoughts/automlr` fork into a formalize.now research project. It records how the paper's claims map onto the upstream Lean formalization, what this fork reproduced independently, and one completed fork extension. The contents are publication-ready documentation for a formalize.now Next Research page; nothing here is published or deployed.
+This directory turns the `thinkthoughts/automlr` fork into a formalize.now research project. It records how the paper's claims map onto the upstream Lean formalization, what this fork reproduced independently, and two completed fork extensions. The contents are publication-ready documentation for a formalize.now Next Research page; nothing here is published or deployed.
 
 ## Paper
 
@@ -12,7 +12,7 @@ The paper studies a one-layer, attention-only transformer with additive position
 
 1. **Reproduction.** The upstream formalization at commit `33daec7fd0092d9215b9692c8241676a3c05a82e` was built and axiom-audited in this fork with the repository's own validator. See [VERIFICATION.md](VERIFICATION.md).
 2. **Crosswalk.** Each paper claim (ARCH-001 to ARCH-009) is mapped to exact Lean declarations, keeping the paper's numbering and the Lean repository's numbering side by side. See [CROSSWALK.md](CROSSWALK.md).
-3. **Fork extension.** EXT-001 to EXT-004 prove that, among symmetric Boolean functions on $n$ bits, parity and its complement are exactly the functions with $H^{\ast}(f) = n$. See `formalization/HeadComplexity/Extensions/`.
+3. **Fork extensions.** EXT-005 completes paper Theorem 5 by proving $\deg _{\pm}(f) = C(F)$ for every symmetric $f$, so the full chain $H^{\ast}(f) = \deg _{\pm}(f) = C(F)$ is machine-checked (ARCH-006). EXT-001 to EXT-004 prove that, among symmetric Boolean functions on $n$ bits, parity and its complement are exactly the functions with $H^{\ast}(f) = n$. See `formalization/HeadComplexity/Extensions/`.
 
 ## Three kinds of evidence
 
@@ -31,6 +31,14 @@ For every $n$, including $n = 0$, and every Hamming-weight profile $F$, the symm
 $$ H^{\ast}(f) = n \iff f = \mathrm{PARITY} \text{ or } f = \lnot \mathrm{PARITY}. $$
 
 Lean: `HeadComplexity.Ext.HStar_symmetricFn_eq_self_iff`.
+
+## Paper Theorem 5, complete
+
+For every $n$ and every profile $F$, with $f(x) = F(|x|)$:
+
+$$ H^{\ast}(f) = \deg _{\pm}(f) = C(F). $$
+
+Lean: `HeadComplexity.Ext.HStar_thresholdDeg_signChanges_symmetricFn`, combining upstream `HStar_symmetricFn` with fork EXT-005 `Ext.thresholdDeg_symmetricFn`.
 
 > **Scope.** This is a corollary of the upstream symmetric characterization (paper Theorem 5, Lean `HStar_symmetricFn`). It is a statement about symmetric Boolean functions in the paper's model. Non-symmetric functions can need more than $n$ heads (upper bound $2^n - 1$, Lean `HStar_le_universal_boolean`), so the result describes the top of the symmetric class only.
 

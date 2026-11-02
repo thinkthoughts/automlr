@@ -1,4 +1,5 @@
 import HeadComplexity.Extensions.SymmetricMaximal
+import HeadComplexity.Extensions.SymmetricThresholdDegree
 
 set_option linter.style.header false
 
@@ -37,5 +38,13 @@ alias ext004_signChanges_eq_self_iff_parity := signChanges_eq_self_iff_parity
 /-- **EXT-004 (main result).** `HStar n (symmetricFn F) = n` iff the function is
 `PARITY n` or its complement. -/
 alias ext004_HStar_symmetricFn_eq_self_iff := HStar_symmetricFn_eq_self_iff
+
+/-- **EXT-005.** `thresholdDeg (symmetricFn F) = signChanges n F` (paper Theorem 5,
+middle equality). -/
+alias ext005_thresholdDeg_symmetricFn := thresholdDeg_symmetricFn
+
+/-- **EXT-005 (full paper Theorem 5).** `H* = deg± = C(F)` for symmetric functions. -/
+alias ext005_HStar_thresholdDeg_signChanges_symmetricFn :=
+  HStar_thresholdDeg_signChanges_symmetricFn
 
 end HeadComplexity.Ext

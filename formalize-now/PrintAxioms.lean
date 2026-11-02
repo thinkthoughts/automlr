@@ -32,6 +32,16 @@ open HeadComplexity
 #print axioms Ext.HStar_symmetricFn_eq_self_iff
 #print axioms Ext.signChanges_zero
 #print axioms Ext.HStar_symmetricFn_zero_cases
+#print axioms Ext.ThresholdDegLE_symmetricFn
+#print axioms Ext.thresholdDeg_symmetricFn
+#print axioms Ext.HStar_eq_thresholdDeg_symmetricFn
+#print axioms Ext.HStar_thresholdDeg_signChanges_symmetricFn
+#print axioms Ext.thresholdDeg_symmetricFn_zero
+#print axioms Ext.signChanges_one
+#print axioms Ext.thresholdDeg_symmetricFn_one
+#print axioms Ext.thresholdDeg_symmetricFn_const
+#print axioms Ext.thresholdDeg_parity_of_symmetricFn
+#print axioms Ext.thresholdDeg_not_parity
 
 -- Exact statements of the fork extensions
 #check @Ext.signChanges_le
@@ -43,3 +53,13 @@ open HeadComplexity
 #check @Ext.signChanges_eq_self_iff_parity
 #check @Ext.HStar_symmetricFn_eq_self_iff
 #check @Ext.HStar_symmetricFn_zero_cases
+#check @Ext.ThresholdDegLE_symmetricFn
+#check @Ext.thresholdDeg_symmetricFn
+#check @Ext.HStar_eq_thresholdDeg_symmetricFn
+#check @Ext.HStar_thresholdDeg_signChanges_symmetricFn
+#check @Ext.thresholdDeg_symmetricFn_zero
+#check @Ext.signChanges_one
+#check @Ext.thresholdDeg_symmetricFn_one
+#check @Ext.thresholdDeg_symmetricFn_const
+#check @Ext.thresholdDeg_parity_of_symmetricFn
+#check @Ext.thresholdDeg_not_parity

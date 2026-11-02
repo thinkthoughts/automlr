@@ -22,6 +22,7 @@
     "command": "bash artifacts/scripts/validate.sh",
     "baseline": {"modules": 41, "theorems_audited": 764, "build_jobs": 2413, "result": "pass"},
     "with_extensions": {"modules": 43, "theorems_audited": 788, "build_jobs": 2415, "result": "pass"},
+    "with_ext005": {"base": "6461e4d", "modules": 44, "theorems_audited": 800, "build_jobs": 2416, "result": "pass"},
     "allowed_axioms": ["propext", "Classical.choice", "Quot.sound"],
     "not_run": ["comparator", "check_md_math.py (absent upstream)"]
   },
@@ -32,7 +33,8 @@
     "partial": "Part of the paper statement has a Lean declaration; the remainder is listed in gaps.",
     "documentary": "Prose content with no Lean target.",
     "intake-record": "Historical research target found already proved upstream.",
-    "fork-extension-verified": "Written in this fork and passed the same checks."
+    "fork-extension-verified": "Written in this fork and passed the same checks.",
+    "fully-formalized": "Every part of the paper statement has a Lean declaration (upstream or fork), with the definition-level correspondence recorded in CROSSWALK.md."
   },
   "entries": [
     {
@@ -108,10 +110,14 @@
       "lean_numbering": "Theorem 12",
       "target": "Exact characterization for symmetric Boolean functions: H*(f) = deg±(f) = C(F)",
       "declarations": [
-        {"name": "HeadComplexity.HStar_symmetricFn", "file": "formalization/HeadComplexity/Results/SymmetricComplexity.lean", "statement": "HStar n (symmetricFn F) = signChanges n F"}
+        {"name": "HeadComplexity.HStar_symmetricFn", "file": "formalization/HeadComplexity/Results/SymmetricComplexity.lean", "statement": "HStar n (symmetricFn F) = signChanges n F", "source": "upstream"},
+        {"name": "HeadComplexity.Ext.thresholdDeg_symmetricFn", "file": "formalization/HeadComplexity/Extensions/SymmetricThresholdDegree.lean", "statement": "thresholdDeg (symmetricFn F) = signChanges n F", "source": "fork EXT-005"},
+        {"name": "HeadComplexity.Ext.HStar_thresholdDeg_signChanges_symmetricFn", "file": "formalization/HeadComplexity/Extensions/SymmetricThresholdDegree.lean", "statement": "HStar n (symmetricFn F) = thresholdDeg (symmetricFn F) ∧ thresholdDeg (symmetricFn F) = signChanges n F", "source": "fork EXT-005"}
       ],
-      "status": ["paper-claimed", "upstream-formalized", "locally-reproduced", "partial"],
-      "gaps": ["deg±(f) = C(F) for symmetric f has no named declaration; ingredients exist upstream (ROADMAP R-001)."]
+      "status": ["paper-claimed", "upstream-formalized", "locally-reproduced", "fully-formalized"],
+      "gaps": [],
+      "notes": "H* = C(F) is upstream; deg± = C(F) is fork EXT-005 (R-001, 2026-11-02). Definition-level correspondence (thresholdDeg vs paper footnote 2, profile domain, change count shift) recorded in CROSSWALK.md.",
+      "adjacent_gaps": ["The paper's remark that permutation-invariant f are exactly the functions with a Hamming-weight profile (Paturi 1992) has no Lean statement; Lean represents symmetric functions as symmetricFn F. Outside the statement of Theorem 5 (ROADMAP R-005)."]
     },
     {
       "id": "ARCH-007",
@@ -195,6 +201,27 @@
       "status": ["fork-extension-verified"],
       "depends_on": ["ARCH-006", "ARCH-007", "EXT-002", "EXT-003"],
       "notes": "Corollary of the upstream symmetric characterization; scoped to symmetric Boolean functions in the paper's model. Absent from the upstream library, upstream prose, and bundled paper text (search in VERIFICATION.md)."
+    },
+    {
+      "id": "EXT-005",
+      "kind": "fork-extension",
+      "target": "Threshold degree of a symmetric function equals its profile's change count; completes paper Theorem 5 (H* = deg± = C(F))",
+      "declarations": [
+        {"name": "HeadComplexity.Ext.ThresholdDegLE_symmetricFn", "file": "formalization/HeadComplexity/Extensions/SymmetricThresholdDegree.lean", "statement": "ThresholdDegLE (symmetricFn F) (signChanges n F)"},
+        {"name": "HeadComplexity.Ext.thresholdDeg_symmetricFn", "file": "formalization/HeadComplexity/Extensions/SymmetricThresholdDegree.lean", "statement": "thresholdDeg (symmetricFn F) = signChanges n F"},
+        {"name": "HeadComplexity.Ext.HStar_eq_thresholdDeg_symmetricFn", "file": "formalization/HeadComplexity/Extensions/SymmetricThresholdDegree.lean", "statement": "HStar n (symmetricFn F) = thresholdDeg (symmetricFn F)"},
+        {"name": "HeadComplexity.Ext.HStar_thresholdDeg_signChanges_symmetricFn", "file": "formalization/HeadComplexity/Extensions/SymmetricThresholdDegree.lean", "statement": "HStar n (symmetricFn F) = thresholdDeg (symmetricFn F) ∧ thresholdDeg (symmetricFn F) = signChanges n F"},
+        {"name": "HeadComplexity.Ext.thresholdDeg_symmetricFn_zero", "file": "formalization/HeadComplexity/Extensions/SymmetricThresholdDegree.lean", "statement": "thresholdDeg (n := 0) (symmetricFn F) = 0"},
+        {"name": "HeadComplexity.Ext.thresholdDeg_symmetricFn_one", "file": "formalization/HeadComplexity/Extensions/SymmetricThresholdDegree.lean", "statement": "thresholdDeg (n := 1) (symmetricFn F) = if F 0 = F 1 then 0 else 1"},
+        {"name": "HeadComplexity.Ext.thresholdDeg_symmetricFn_const", "file": "formalization/HeadComplexity/Extensions/SymmetricThresholdDegree.lean", "statement": "thresholdDeg (symmetricFn fun _ => b) = 0"},
+        {"name": "HeadComplexity.Ext.thresholdDeg_parity_of_symmetricFn", "file": "formalization/HeadComplexity/Extensions/SymmetricThresholdDegree.lean", "statement": "thresholdDeg (PARITY n) = n"},
+        {"name": "HeadComplexity.Ext.thresholdDeg_not_parity", "file": "formalization/HeadComplexity/Extensions/SymmetricThresholdDegree.lean", "statement": "(thresholdDeg fun bits => !PARITY n bits) = n"}
+      ],
+      "status": ["fork-extension-verified"],
+      "depends_on": ["ARCH-003", "ARCH-006"],
+      "completes": "ARCH-006",
+      "roadmap": "R-001",
+      "notes": "Stated in the paper (Theorem 5, citing Aspnes et al. 1994, Lemma 2.6); first Lean declaration for a general profile. Upstream thresholdDeg_parity covers the parity profile only and is rederived here as a corollary."
     }
   ]
 }
